@@ -1,3 +1,2 @@
 # JAVA-jar-maven
 
-test
