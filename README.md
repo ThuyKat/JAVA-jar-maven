@@ -67,7 +67,7 @@ show tables;
 ```
 3. Import mysql connector dependency from mvnrepository
 (INTELIJ)
-Go to mvnrepository and search for mysql --> paste the dependency to pom.xml -> maven will get this dependency for youin its central repository
+Go to mvnrepository and search for mysql --> paste the dependency to pom.xml -> maven will get this dependency for you in its central repository
 
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -92,6 +92,54 @@ Go to mvnrepository and search for mysql --> paste the dependency to pom.xml -> 
 right click on project -> add dependencies -> enter groupid, artifact, version -> ok -> open pom.xml : sql dependency is automatically added
 
 ![alt text](SS/image2.png)
+
+In eclipse, you need to right click on the project -> Update project 
+Otherwise: eclipse -> Preferences -> Maven -> uncheck the option: " do not automatically update dependencies.."
+
+4. Check if Maven dependencies are added in external libraries
+
+![alt text](SS/image3.png)
+
+** where exactly are these dependencies stored?** 
+Locally, dependencies are stored in .m2 folder in local repository. It is created automatically when you create a maven project. 
+When Java needs any dependency, it will first search in .m2 folder. If it does not find any there, it will go to central repository(mvnrepository.com) to get the dependency and also store the newly acquired dependency in .m2 folder for convenience next time if that dependency is used again
+In order to go to .m2 folder, in terminal from root: 
+
+```
+cd .m2/repository 
+ls
+( cd /User/user_name/.m2/repository)
+
+```
+In production environment, there will be a repository for authentication and authorisation purpose that only a permitted personnell can access ( e.g., nexus repository)
+
+5. Java provides Driver Manager class which use a static method to connect Java to database without any further implementation. The method is DriverManager.getConnection(), details of conneciton is stored in Connection interface. The Connection interface has ;
+- Statement createStatement() method to send SQL queries to the database, 
+- PreparedStatement prepareStatement(): to send send parameterised SQL statements to the database
+- Blob createBlob() to constructs a Blob object, 
+- boolean getAutoCommit() to retrieves the current auto-commit mode for this Connection object
+- Properties getClientInfo() to retrieves the current client infor properties for this Connection object
+- DatabaseMetaData getMetaData() to retrieves a DatabaseMetaData object that contains metadata about the db 
+- boolean isClose() to check whether the connection is closed,
+- CallableStatement prepareCall(String sql) to creates a CallableStatement object for calling database stored procedures
+
+![alt text](SS/image4.png)
+
+
+## MAVEN LIFECYCLE
+For effectively build and manage projects, we have phases: 
+- clean : remove the folder named "target"
+- validate: validates if all necessary information is available
+- compile : run file main -> we can see a copy in the target folder. Even if you have error in the test file, it wont throw any error, it only check the source folder
+- test: will check for errors in both main() file and test file
+- package: create .jar file but not yet deploy it to local repo .m2
+- verify : verify if .jar file has been created or not. If not, maven will create a new .jar file
+- install: copy all dependencies existing in pom.xlm and .jar to .m2 repository. If you want to utilise other project's source for your project -> mvn install inthat project -> go to your project import it by adding dependencies in pom.xml
+- site: specify where you want to deploy your code remotely
+- deploy
+
+To check locations of maven dependency, use mvn dependency:tree command
+
 
 
 
