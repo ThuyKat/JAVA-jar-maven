@@ -135,10 +135,72 @@ For effectively build and manage projects, we have phases:
 - package: create .jar file but not yet deploy it to local repo .m2
 - verify : verify if .jar file has been created or not. If not, maven will create a new .jar file
 - install: copy all dependencies existing in pom.xlm and .jar to .m2 repository. If you want to utilise other project's source for your project -> mvn install inthat project -> go to your project import it by adding dependencies in pom.xml
-- site: specify where you want to deploy your code remotely
-- deploy
+- site:  maven will create a folder named "site" and open html file we see infor about our project
+- deploy: specify in pom.xml where you want to deploy your code remotely under < distribution management>
+
+NOTE: all steps in Maven cycle will check if previous steps have completed, if not maven will complete them before running. If yes, generated files will be reused.
 
 To check locations of maven dependency, use mvn dependency:tree command
+## Web services VS jar
+
+Web services follow protocols to communicate between 2 servers. Standard protocols include: 
+
+1. Host IP: where the server is running. e.g., localhost
+2. Port : e.g., 3306,8080
+3. Method: whenever you create a method, you map it to an API path (URI), e.g., get method is mapped to "/hello" path
+4. Parameters
+
+In terms of communicaiton method, using Jar files requires source code available and whether we can import depends on language. With API, we do not need the source code and able to connect independetly of whatever programming language we use. 
+## Web server vs Application server
+Web server's main agenda is to maintain static content and interact with application server via HTTP protocols when it needs to fetch dynamic content from application server. When number of requests form user increases, the lentency would increase. We would need multiple servers and a load balancer with a routing mechanism to distribute traffic to different web servers. We can implement load balancer betwee different servers as well. However we dont need a load balancer between services and database because database can manage the requests itself
+
+## HTTP server demo
+
+Below is demonstration of protocols to interact with service via HTTP server: 
+
+```java
+public class Httpdemo {
+	public static void main(String[] args) {
+		try {
+			//IP + port
+		InetSocketAddress address = new InetSocketAddress("localhost",8090);
+			HttpServer httpServer = HttpServer.create(address,0);
+			//additional config and context handler
+			httpServer.setExecutor(Executors.newFixedThreadPool(4));
+			//method, path
+			httpServer.createContext("/hello",new HelloHandler());
+			//start the server, making it ready to accept incoming connections
+			httpServer.start();
+			System.out.println("Server started on port 9090");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+```
+The HelloHandler class: 
+
+```java
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import java.io.IOException;
+import java.io.OutputStream;
+
+public class HelloHandler implements HttpHandler {
+
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        // TODO Auto-generated method stub
+        String res = "I am returned from Hello" + Thread.currentThread().getName();
+
+        exchange.sendResponseHeaders(200, res.length());
+        OutputStream os = exchange.getResponseBody();
+        os.write(res.getBytes());
+
+    }
+}
+```
+HttpServer is lower-level networking protocols in TCP and UDP layer of OSI model that provide basic communication services without the addition features found in HTTP and application layer (layer 7) of OSI model. They only are responsible for packaging data into packets and providing basic transmission services. There wont be any decoding and formating, session management and UI interface. In contrast, HTTP can manage sessions using mechanisms like cookies, session tokens, and authentication headers. HTTP provides a foundation for building user interfaces and web apps to enable users to interact with web content. 
 
 
 
