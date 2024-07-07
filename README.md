@@ -202,7 +202,7 @@ public class HelloHandler implements HttpHandler {
 ```
 HttpServer is lower-level networking protocols in TCP and UDP layer of OSI model that provide basic communication services without the addition features found in HTTP and application layer (layer 7) of OSI model. They only are responsible for packaging data into packets and providing basic transmission services. There wont be any decoding and formating, session management and UI interface. In contrast, HTTP can manage sessions using mechanisms like cookies, session tokens, and authentication headers. HTTP provides a foundation for building user interfaces and web apps to enable users to interact with web content. 
 
-
+![alt text](SS/image5.png)
 
 
 
